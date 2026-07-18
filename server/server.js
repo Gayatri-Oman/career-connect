@@ -1,12 +1,15 @@
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
+
+app.use(cors());
 
 app.get("/", (req, res) =>{
     res.send("Welcome to Career-Connect");
 });
 
-app.get("/job", (req, res) =>{
+app.get("/jobs", (req, res) =>{
     res.json([
         {
             id: 1,
