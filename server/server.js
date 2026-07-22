@@ -1,6 +1,24 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql2");
 
+const connection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "career_connect",
+    port: 3307,
+})
+
+connection.connect((err) => {
+
+    if (err) {
+        console.log("Connection Failed :",err);
+        return;
+    }
+
+    console.log("Connected to MySQL");
+});
 const app = express();
 
 app.use(cors());
@@ -10,20 +28,14 @@ app.get("/", (req, res) =>{
 });
 
 app.get("/jobs", (req, res) =>{
-    res.json([
-        {
-            id: 1,
-            title: "Software Developer",
-            company: "Google",
-            location: "Banglore"
-        },
-        {
-            id: 2,
-            title: "Frontend Developer",
-            company: "Microsoft",
-            location: "Hyderabad"
+    connection.query("SELECT * FROM jobs",(err,results) => {
+        if(err) {
+            res.status(500).send("Database Error");
+            return;
         }
-    ]);
+
+        res.json(results);
+    })
 });
 
 app.get("/companies", (req, res) => {
