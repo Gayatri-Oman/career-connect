@@ -22,6 +22,7 @@ connection.connect((err) => {
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) =>{
     res.send("Welcome to Career-Connect");
@@ -38,6 +39,46 @@ app.get("/jobs", (req, res) =>{
     })
 });
 
+app.post("/jobs", (req, res) => {
+
+   const { title, company, location } = req.body;
+
+   connection.query(
+    "INSERT INTO jobs (title, company, location) VALUES (?, ?, ?)",
+    [title, company, location],
+    (err, results) => {
+        if(err) {
+            res.status(500).send("Database Error");
+        }
+
+        res.send("Job Added Successfully");
+    }
+   )
+
+});
+
+app.put("/jobs/:id", (req, res) => {
+
+    const id = req.params.id;
+
+    const { title, company, location } = req.body;
+
+    connection.query(
+        "UPDATE jobs SET title = ?, company = ?, location = ? WHERE id = ?",
+        [title, company, location, id],
+        (err, results) => {
+
+            if (err) {
+                res.status(500).send("Database Error");
+                return;
+            }
+
+            res.send("Job Updated Successfully");
+
+        }
+    );
+
+});
 app.get("/companies", (req, res) => {
     res.json([
         {
